@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -12,6 +14,10 @@ const App = () => {
     'title': '',
     'author': '',
     'url': ''
+  })
+  const [notification, setNotification] = useState({
+    'content': null,
+    'type': null
   })
 
   useEffect(() => {
@@ -45,10 +51,11 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      setNotification({
+        'content': 'wrong credentials',
+        'type': 'error'
+      })
+      notificationTimeout()
     }
   }
 
@@ -57,22 +64,74 @@ const App = () => {
     window.location.reload()
   }
 
+  const notificationTimeout = () => {
+    setTimeout(() => {
+      setNotification({
+        'content': null,
+        'type': null
+      })
+    }, 5000)
+  }
+
+  const validate = () => {
+    if (!newBlog.title) {
+      setNotification({
+        'content': 'Title is required',
+        'type': 'error'
+      })
+      notificationTimeout()
+      return false
+    } else if (!newBlog.author) {
+      setNotification({
+        'content': 'Author is required',
+        'type': 'error'
+      })
+      notificationTimeout()
+      return false
+    } else if (newBlog.author.length < 2) {
+      setNotification({
+        'content': 'Minimum length for author is 2',
+        'type': 'error'
+      })
+      notificationTimeout()
+      return false
+    } else if (newBlog.url.length < 4) {
+      setNotification({
+        'content': 'Minimum length for url is 4',
+        'type': 'error'
+      })
+      notificationTimeout()
+      return false
+    }
+    return true
+  }
+
   const addBlog = async (event) => {
     event.preventDefault()
-
+    if (validate(newBlog)) {
     try {
       const returnedBlog = await blogService.create(newBlog)
       setBlogs(blogs.concat(returnedBlog))
       setNewBlog({title:'', author:'', url:''})
+      setNotification({
+        'content': `a new blog ${newBlog.title} by ${newBlog.author} added`,
+        'type': 'success'
+      })
     } catch (error) {
-      console.error('Error adding blog: ', error)
+      console.log('error')
+      setNotification({
+        'content': `Error adding blog: ${error}`,
+        'type': 'error'
+      })
+      notificationTimeout()
+    }}
     }
-  }
 
   const createBlogForm = () => {
     return(
       <div>
         <h3>create new</h3>
+        <Notification notification={notification}/>
         <form onSubmit={addBlog}>
           <div>
             title
@@ -161,10 +220,18 @@ const App = () => {
 
 return (
   <div>
-    {!user && loginForm()}
-    {user && info()}
-    {user && createBlogForm()}
-    {user && blogList()}
+    {user && 
+      <div>
+      {info()}
+      {createBlogForm()}
+      {blogList()}
+      </div>
+    }
+    {!user &&
+      <div>
+        {loginForm()}
+      </div>
+    }
   </div>
 )
 }
