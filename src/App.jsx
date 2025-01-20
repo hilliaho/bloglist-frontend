@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
@@ -12,16 +12,12 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [newBlog, setNewBlog] = useState({
-    'title': '',
-    'author': '',
-    'url': ''
-  })
   const [notification, setNotification] = useState({
     'content': null,
     'type': null
   })
-  const [blogFormVisible, setBlogFormVisible] = useState(false)
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -76,7 +72,7 @@ const App = () => {
     }, 5000)
   }
 
-  const validate = () => {
+  const validate = (newBlog) => {
     if (!newBlog.title) {
       setNotification({
         'content': 'Title is required',
@@ -109,13 +105,12 @@ const App = () => {
     return true
   }
 
-  const addBlog = async (event) => {
-    event.preventDefault()
+  const addBlog = async (newBlog) => {
+    blogFormRef.current.toggleVisibility()
     if (validate(newBlog)) {
     try {
       const returnedBlog = await blogService.create(newBlog)
       setBlogs(blogs.concat(returnedBlog))
-      setNewBlog({title:'', author:'', url:''})
       setNotification({
         'content': `a new blog ${newBlog.title} by ${newBlog.author} added`,
         'type': 'success'
@@ -129,7 +124,6 @@ const App = () => {
       })
       notificationTimeout()
     }}
-    setBlogFormVisible(false)
     }
 
   const loginForm = () => {
@@ -188,8 +182,8 @@ return (
       {info()}
       {<Notification notification={notification}/>}
       {
-        <Togglable buttonLabel='add blog' visible={blogFormVisible} setVisible={setBlogFormVisible}>
-        <BlogForm addBlog={addBlog} newBlog={newBlog} setNewBlog={setNewBlog}/>
+        <Togglable buttonLabel='add blog' ref={blogFormRef}>
+        <BlogForm createBlog={addBlog}/>
         </Togglable>
       }
       {blogList()}
