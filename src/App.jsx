@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -19,6 +21,7 @@ const App = () => {
     'content': null,
     'type': null
   })
+  const [blogFormVisible, setBlogFormVisible] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -117,6 +120,7 @@ const App = () => {
         'content': `a new blog ${newBlog.title} by ${newBlog.author} added`,
         'type': 'success'
       })
+      notificationTimeout()
     } catch (error) {
       console.log('error')
       setNotification({
@@ -125,49 +129,8 @@ const App = () => {
       })
       notificationTimeout()
     }}
+    setBlogFormVisible(false)
     }
-
-  const createBlogForm = () => {
-    return(
-      <div>
-        <h3>create new</h3>
-        <Notification notification={notification}/>
-        <form onSubmit={addBlog}>
-          <div>
-            title
-            <input
-            type='text'
-            value={newBlog.title}
-            onChange={({ target }) => 
-              setNewBlog({...newBlog, title: target.value})
-            }
-            />
-          </div>
-          <div>
-            author
-            <input
-            type='text'
-            value={newBlog.author}
-            onChange={({target}) => 
-              setNewBlog({...newBlog, author: target.value})
-            }
-            />
-          </div>
-          <div>
-            url
-            <input
-            type='text'
-            value={newBlog.url}
-            onChange={({target}) =>
-              setNewBlog({...newBlog, url: target.value})
-            }
-            />
-          </div>
-          <button type='submit'>save</button>
-        </form>
-      </div>
-    )
-  }
 
   const loginForm = () => {
     return (
@@ -212,7 +175,7 @@ const App = () => {
     return(
       <div>
         <h2>blogs</h2>
-        <h3>{user.name} logged in</h3>
+        <span>{user.name} logged in </span>
         <button onClick={handleLogout}>Logout</button>
       </div>
     )
@@ -223,7 +186,12 @@ return (
     {user && 
       <div>
       {info()}
-      {createBlogForm()}
+      {<Notification notification={notification}/>}
+      {
+        <Togglable buttonLabel='add blog' visible={blogFormVisible} setVisible={setBlogFormVisible}>
+        <BlogForm addBlog={addBlog} newBlog={newBlog} setNewBlog={setNewBlog}/>
+        </Togglable>
+      }
       {blogList()}
       </div>
     }
