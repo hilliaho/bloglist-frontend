@@ -117,7 +117,6 @@ const App = () => {
       })
       notificationTimeout()
     } catch (error) {
-      console.log('error')
       setNotification({
         'content': `Error adding blog: ${error}`,
         'type': 'error'
@@ -125,6 +124,20 @@ const App = () => {
       notificationTimeout()
     }}
     }
+
+  const updateBlog = async (blog) => {
+    try {
+      const returnedBlog = await blogService.update(blog)
+      console.log('returned blog: ', returnedBlog)
+      setBlogs(blogs.map(blog => blog.id === returnedBlog.id ? returnedBlog : blog))
+    } catch (error) {
+      setNotification({
+        'content': `Error updating blog: ${error}`,
+        'type': 'error'
+      })
+      notificationTimeout()
+    }
+  }
 
   const loginForm = () => {
     return (
@@ -159,7 +172,7 @@ const App = () => {
     return(
       <div>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/>
         )}
       </div>
     )

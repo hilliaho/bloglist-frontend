@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, updateBlog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -23,7 +23,11 @@ const Blog = ({ blog }) => {
   }
 
   const like = () => {
-    console.log('liked')
+    const updatedBlog = {
+      ...blog,
+      likes: blog.likes + 1
+    }
+    updateBlog(updatedBlog)
   }
 
   return(
