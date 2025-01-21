@@ -44,7 +44,7 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
     <div style={blogStyle}>
       {!opened &&
       <div>
-        {blog.title} {blog.author} <button onClick={toggle}>{buttonLabel}</button>
+        {blog.title} {blog.author} <button id='view-button' onClick={toggle}>{buttonLabel}</button>
       </div>}
       {opened &&
       <div>
@@ -52,8 +52,8 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
           {blog.title} {blog.author} <button onClick={toggle}>{buttonLabel}</button>
         </div>
         <div id='url'>{blog.url}</div>
-        <div id='likes'>likes {blog.likes} <button onClick={like}>like</button></div>
-        <div>{blog.user.name}</div>
+        <div id='likes'>likes {blog.likes} <button id='like-button' onClick={like}>like</button></div>
+        <div id='name'>{blog.user.name}</div>
         {userOwnsBlog && <div><button onClick={remove}>remove</button></div>}
       </div>}
     </div>
