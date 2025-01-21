@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 
-const Blog = ({ blog, updateBlog }) => {
+const Blog = ({ blog, updateBlog, removeBlog, user }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -30,6 +30,13 @@ const Blog = ({ blog, updateBlog }) => {
     updateBlog(updatedBlog)
   }
 
+  const remove = () => {
+    window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
+    removeBlog(blog)
+  }
+
+  const userOwnsBlog = user.username === blog.user.username
+
   return(
     <div style={blogStyle}>
     {!opened &&
@@ -44,6 +51,7 @@ const Blog = ({ blog, updateBlog }) => {
     <div>{blog.url}</div>
     <div>likes {blog.likes} <button onClick={like}>like</button></div>
     <div>{blog.user.name}</div>
+    {userOwnsBlog && <div><button onClick={remove}>remove</button></div>}
   </div>}
   </div>
     ) 

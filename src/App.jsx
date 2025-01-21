@@ -49,6 +49,7 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      window.location.reload()
     } catch (exception) {
       setNotification({
         'content': 'wrong credentials',
@@ -138,6 +139,19 @@ const App = () => {
     }
   }
 
+  const removeBlog = async (blog) => {
+    try {
+      blogService.remove(blog)
+      setBlogs(blogs.filter(b => b.id != blog.id))
+    } catch (error) {
+      setNotification({
+        'content': `Error deleting blog: ${error}`,
+        'type': 'error'
+      })
+      notificationTimeout()
+    }
+  }
+
   const loginForm = () => {
     return (
       <div>
@@ -167,11 +181,20 @@ const App = () => {
     )
   }
 
+  const compareLikes = (blog1, blog2) => {
+    if (blog1.likes < blog2.likes) {
+      return 1
+    } else if (blog2.likes < blog1.likes) {
+      return -1
+    }
+    return 0
+  }
+
   const blogList = () => {
     return(
       <div>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/>
+        {blogs.sort(compareLikes).map(blog =>
+          <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} user={user} />
         )}
       </div>
     )
