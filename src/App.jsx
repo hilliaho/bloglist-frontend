@@ -128,7 +128,6 @@ const App = () => {
   const updateBlog = async (blog) => {
     try {
       const returnedBlog = await blogService.update(blog)
-      console.log('returned blog: ', returnedBlog)
       setBlogs(blogs.map(blog => blog.id === returnedBlog.id ? returnedBlog : blog))
     } catch (error) {
       setNotification({
