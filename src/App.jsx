@@ -22,7 +22,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -37,7 +37,6 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
     try {
       const user = await loginService.login({
         username, password,
@@ -109,22 +108,23 @@ const App = () => {
   const addBlog = async (newBlog) => {
     blogFormRef.current.toggleVisibility()
     if (validate(newBlog)) {
-    try {
-      const returnedBlog = await blogService.create(newBlog)
-      setBlogs(blogs.concat(returnedBlog))
-      setNotification({
-        'content': `a new blog ${newBlog.title} by ${newBlog.author} added`,
-        'type': 'success'
-      })
-      notificationTimeout()
-    } catch (error) {
-      setNotification({
-        'content': `Error adding blog: ${error}`,
-        'type': 'error'
-      })
-      notificationTimeout()
-    }}
+      try {
+        const returnedBlog = await blogService.create(newBlog)
+        setBlogs(blogs.concat(returnedBlog))
+        setNotification({
+          'content': `a new blog ${newBlog.title} by ${newBlog.author} added`,
+          'type': 'success'
+        })
+        notificationTimeout()
+      } catch (error) {
+        setNotification({
+          'content': `Error adding blog: ${error}`,
+          'type': 'error'
+        })
+        notificationTimeout()
+      }
     }
+  }
 
   const updateBlog = async (blog) => {
     try {
@@ -142,7 +142,7 @@ const App = () => {
   const removeBlog = async (blog) => {
     try {
       blogService.remove(blog)
-      setBlogs(blogs.filter(b => b.id != blog.id))
+      setBlogs(blogs.filter(b => b.id !== blog.id))
     } catch (error) {
       setNotification({
         'content': `Error deleting blog: ${error}`,
@@ -157,26 +157,26 @@ const App = () => {
       <div>
         <h2>Log in to application</h2>
         <form onSubmit={handleLogin}>
-        <div>
-          username
+          <div>
+            username
             <input
-            type='text'
-            value={username}
-            name='Username'
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
+              type='text'
+              value={username}
+              name='Username'
+              onChange={({ target }) => setUsername(target.value)}
+            />
+          </div>
+          <div>
+            password
             <input
-            type='password'
-            value={password}
-            name='Password'
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type='submit'>login</button>
-      </form>
+              type='password'
+              value={password}
+              name='Password'
+              onChange={({ target }) => setPassword(target.value)}
+            />
+          </div>
+          <button type='submit'>login</button>
+        </form>
       </div>
     )
   }
@@ -210,27 +210,27 @@ const App = () => {
     )
   }
 
-return (
-  <div>
-    {user && 
-      <div>
-      {info()}
-      {<Notification notification={notification}/>}
-      {
-        <Togglable buttonLabel='add blog' ref={blogFormRef}>
-        <BlogForm createBlog={addBlog}/>
-        </Togglable>
+  return (
+    <div>
+      {user &&
+        <div>
+          {info()}
+          {<Notification notification={notification}/>}
+          {
+            <Togglable buttonLabel='add blog' ref={blogFormRef}>
+              <BlogForm createBlog={addBlog}/>
+            </Togglable>
+          }
+          {blogList()}
+        </div>
       }
-      {blogList()}
-      </div>
-    }
-    {!user &&
-      <div>
-        {loginForm()}
-      </div>
-    }
-  </div>
-)
+      {!user &&
+        <div>
+          {loginForm()}
+        </div>
+      }
+    </div>
+  )
 }
 
 export default App

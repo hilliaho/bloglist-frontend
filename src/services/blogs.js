@@ -23,7 +23,7 @@ const getAll = () => {
 
 const update = async object => {
   const config = {
-    headers: { Authorization: token},
+    headers: { Authorization: token },
   }
   const url = baseUrl + `/${object.id}`
   const response = await axios.put(url, object, config)
@@ -32,7 +32,7 @@ const update = async object => {
 
 const remove = async object => {
   const config = {
-    headers: { Authorization: token},
+    headers: { Authorization: token },
   }
   const url = baseUrl + `/${object.id}`
   const response = await axios.delete(url, config)

@@ -1,6 +1,8 @@
-import { useState } from "react"
+import { useState } from 'react'
+import propTypes from 'prop-types'
 
 const Blog = ({ blog, updateBlog, removeBlog, user }) => {
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -14,11 +16,11 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
 
   const toggle = () => {
     if (opened) {
-    setButtonLabel('view')
-    setOpened(false)
+      setButtonLabel('view')
+      setOpened(false)
     } else {
-    setButtonLabel('hide')
-    setOpened(true)
+      setButtonLabel('hide')
+      setOpened(true)
     }
   }
 
@@ -31,30 +33,38 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
   }
 
   const remove = () => {
-    window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
-    removeBlog(blog)
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)){
+      removeBlog(blog)
+    }
   }
 
   const userOwnsBlog = user.username === blog.user.username
 
   return(
     <div style={blogStyle}>
-    {!opened &&
-  <div>
-    {blog.title} {blog.author} <button onClick={toggle}>{buttonLabel}</button>
-  </div>}
-  {opened &&
-  <div>
-    <div>
-      {blog.title} {blog.author} <button onClick={toggle}>{buttonLabel}</button>
+      {!opened &&
+      <div>
+        {blog.title} {blog.author} <button onClick={toggle}>{buttonLabel}</button>
+      </div>}
+      {opened &&
+      <div>
+        <div>
+          {blog.title} {blog.author} <button onClick={toggle}>{buttonLabel}</button>
+        </div>
+        <div>{blog.url}</div>
+        <div>likes {blog.likes} <button onClick={like}>like</button></div>
+        <div>{blog.user.name}</div>
+        {userOwnsBlog && <div><button onClick={remove}>remove</button></div>}
+      </div>}
     </div>
-    <div>{blog.url}</div>
-    <div>likes {blog.likes} <button onClick={like}>like</button></div>
-    <div>{blog.user.name}</div>
-    {userOwnsBlog && <div><button onClick={remove}>remove</button></div>}
-  </div>}
-  </div>
-    ) 
+  )
+}
+
+Blog.propTypes = {
+  blog: propTypes.object.isRequired,
+  updateBlog: propTypes.func.isRequired,
+  removeBlog: propTypes.func.isRequired,
+  user: propTypes.object.isRequired
 }
 
 export default Blog
